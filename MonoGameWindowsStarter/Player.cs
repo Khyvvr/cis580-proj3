@@ -38,17 +38,17 @@ namespace MonoGameWindowsStarter
         PlayerState state = PlayerState.Idle;       // player's animation state initialized to idle
         int playerSpeed = 4;                        // player's speed
 
-        bool isJumping = false;                     // bool to determine if player is jumping
-        bool isFalling = false;                     // bool to determine if player is falling
-        TimeSpan jumpTimer;                         // timer to determine jump duration
-        TimeSpan animationTimer;                    // timer for animation duration
+        bool isJumping = false;                                 // bool to determine if player is jumping
+        bool isFalling = false;                                 // bool to determine if player is falling
+        TimeSpan jumpTimer;                                     // timer to determine jump duration
+        TimeSpan animationTimer;                                // timer for animation duration
 
         SpriteEffects spriteEffects = SpriteEffects.None;       // current sprite effects
 
-        Color color = Color.White;                  // color of the sprite
-        Vector2 origin = new Vector2(x,y);          // origin/center of sprite
+        Color color = Color.White;                              // color of the sprite
+        Vector2 origin = new Vector2(x,y);                      // origin/center of sprite
 
-        public Vector2 Position = new Vector2(x, y);    // get and sets position of player on screen
+        public Vector2 Position = new Vector2(x, y);            // get and sets position of player on screen
 
         /// <summary>
         /// player constructor
@@ -62,8 +62,9 @@ namespace MonoGameWindowsStarter
 
         public void Update(GameTime gameTime)
         {
-            var keyboard = Keyboard.GetState();         // gets the current state of the keyboard
+            var keyboard = Keyboard.GetState();                 // gets the current state of the keyboard
 
+            //determine jump movement
             if (isJumping)
             {
                 jumpTimer += gameTime.ElapsedGameTime;
@@ -93,6 +94,7 @@ namespace MonoGameWindowsStarter
                 jumpTimer = new TimeSpan(0);
             }
 
+            // determines horizontal movement
             if (keyboard.IsKeyDown(Keys.Left))
             {
                 if (isJumping || isFalling) state = PlayerState.JumpLeft;
@@ -112,6 +114,7 @@ namespace MonoGameWindowsStarter
 
 
 
+            // -- FIGURE OUT HOW THIS WORKS WITH THE SPRITESHEET --
             switch (state)
             {
                 case PlayerState.Idle:
