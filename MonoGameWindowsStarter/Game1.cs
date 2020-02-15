@@ -11,6 +11,8 @@ namespace MonoGameWindowsStarter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteSheet sheet;
+        Player player;
 
         public Game1()
         {
@@ -41,6 +43,11 @@ namespace MonoGameWindowsStarter
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            var t = Content.Load<Texture2D>("");        //insert name of spritesheet file
+            sheet = new SpriteSheet(t, );               // provide width height offset and gutter
+
+            var playerFrames = from index in Enumerable.Range(,) select sheet[index];           // provide range of sprites for player 
+            player = new Player(playerFrames);
         }
 
         /// <summary>
@@ -63,6 +70,7 @@ namespace MonoGameWindowsStarter
                 Exit();
 
             // TODO: Add your update logic here
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -76,6 +84,15 @@ namespace MonoGameWindowsStarter
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);               // draws player
+
+            for (var i = 19; i < 30; i++)
+            {
+                sheet[i].Draw(spriteBatch, new Vector2(i * 25, 25), Color.White);       // draws arbitrary range of sprites (should correspond to range playerFrames is initiated too)
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
