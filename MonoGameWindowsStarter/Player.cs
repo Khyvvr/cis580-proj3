@@ -72,6 +72,16 @@ namespace MonoGameWindowsStarter
                 state = PlayerState.MoveRight;
                 Position.X += playerSpeed;
             }
+            else if (keyboard.IsKeyDown(Keys.Up))
+            {
+                state = PlayerState.MoveUp;
+                Position.Y -= playerSpeed;
+            }
+            else if (keyboard.IsKeyDown(Keys.Down))
+            {
+                state = PlayerState.MoveDown;
+                Position.Y += playerSpeed;
+            }
             else
             {
                 state = PlayerState.Idle;
@@ -98,6 +108,26 @@ namespace MonoGameWindowsStarter
                 case PlayerState.MoveRight:
                     animationTimer += gameTime.ElapsedGameTime;
                     spriteEffects = SpriteEffects.None;
+                    // Walking frames are 1 & 2
+                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 1;
+                    if (animationTimer.TotalMilliseconds > FRAME_RATE * 2)
+                    {
+                        animationTimer = new TimeSpan(0);
+                    }
+                    break;
+                case PlayerState.MoveUp:
+                    animationTimer += gameTime.ElapsedGameTime;
+                    spriteEffects = SpriteEffects.None;
+                    // Walking frames are 1 & 2
+                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 1;
+                    if (animationTimer.TotalMilliseconds > FRAME_RATE * 2)
+                    {
+                        animationTimer = new TimeSpan(0);
+                    }
+                    break;
+                case PlayerState.MoveDown:
+                    animationTimer += gameTime.ElapsedGameTime;
+                    spriteEffects = SpriteEffects.FlipHorizontally;
                     // Walking frames are 1 & 2
                     currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 1;
                     if (animationTimer.TotalMilliseconds > FRAME_RATE * 2)
