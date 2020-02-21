@@ -25,8 +25,6 @@ namespace MonoGameWindowsStarter
 
         OliveAnimState animationState = OliveAnimState.Moving;
 
-        int speed = 5;
-
         TimeSpan animationTimer;
 
         SpriteEffects spriteEffects = SpriteEffects.None;
@@ -51,7 +49,7 @@ namespace MonoGameWindowsStarter
             {
                 Position += (float)gameTime.ElapsedGameTime.TotalMilliseconds * new Vector2(
                                                                                         (float)random.NextDouble(),
-                                                                                        (float)random.NextDouble());
+                                                                                        (float)random.NextDouble());    //random speed for olives
             }
 
             switch (animationState)

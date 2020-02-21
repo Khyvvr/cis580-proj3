@@ -24,7 +24,7 @@ namespace MonoGameWindowsStarter
 
 
         Player player;
-        Olive olive1, olive2, olive3;
+        Olive olive1, olive2, olive3, olive4, olive5;
         List<Barrier> barriers;
         AxisList world;
 
@@ -76,6 +76,8 @@ namespace MonoGameWindowsStarter
             olive1 = new Olive(oliveFrames);
             olive2 = new Olive(oliveFrames);
             olive3 = new Olive(oliveFrames);
+            olive4 = new Olive(oliveFrames);
+            olive5 = new Olive(oliveFrames);
 
             //create asteroid barrier here:
             barriers.Add(new Barrier(new BoundingRectangle(200, 75, 400, 125), asteroid));      
@@ -115,6 +117,8 @@ namespace MonoGameWindowsStarter
             olive1.Update(gameTime);
             olive2.Update(gameTime);
             olive3.Update(gameTime);
+            olive4.Update(gameTime);
+            olive5.Update(gameTime);
 
             var barrierQuery = world.QueryRange(player.Bounds.X, player.Bounds.X + player.Bounds.Width);
             player.CheckForBarrierCollision(barrierQuery);
@@ -147,6 +151,8 @@ namespace MonoGameWindowsStarter
             olive1.Draw(spriteBatch);
             olive2.Draw(spriteBatch);
             olive3.Draw(spriteBatch);
+            olive4.Draw(spriteBatch);
+            olive5.Draw(spriteBatch);
 
             for(var i = 0; i <= 2; i++)
             {
