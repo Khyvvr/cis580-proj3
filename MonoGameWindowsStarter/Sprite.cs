@@ -27,6 +27,11 @@ namespace MonoGameWindowsStarter
             this.texture = texture;
         }
 
+        public float GetWidth()
+        {
+            return this.texture.Width;
+        }
+
         public void Draw(SpriteBatch spriteBatch, Rectangle destRec, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
         {
             spriteBatch.Draw(texture, destRec, source, color, rotation, origin, effects, layerDepth);

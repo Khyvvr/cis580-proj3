@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace MonoGameWindowsStarter
 {
@@ -15,13 +16,11 @@ namespace MonoGameWindowsStarter
     enum PlayerState
     {
         Idle,
-        MoveRight,
         MoveLeft,
+        MoveRight,
         MoveUp,
         MoveDown,
-        JumpRight,
-        JumpLeft,
-        Dead
+        Ghost
     }
 
     /// <summary>
@@ -38,17 +37,16 @@ namespace MonoGameWindowsStarter
         PlayerState state = PlayerState.Idle;       // player's animation state initialized to idle
         int playerSpeed = 4;                        // player's speed
 
-        bool isJumping = false;                     // bool to determine if player is jumping
-        bool isFalling = false;                     // bool to determine if player is falling
-        TimeSpan jumpTimer;                         // timer to determine jump duration
         TimeSpan animationTimer;                    // timer for animation duration
 
         SpriteEffects spriteEffects = SpriteEffects.None;       // current sprite effects
 
         Color color = Color.White;                  // color of the sprite
-        Vector2 origin = new Vector2(x,y);          // origin/center of sprite
+        Vector2 origin = new Vector2(45, 85);          // origin/center of sprite
 
-        public Vector2 Position = new Vector2(x, y);    // get and sets position of player on screen
+        public Vector2 Position = new Vector2(100, 100);    // get and sets position of player on screen
+
+        public BoundingRectangle Bounds => new BoundingRectangle(Position - 1.8f * origin, 44, 44);
 
         /// <summary>
         /// player constructor
@@ -64,45 +62,14 @@ namespace MonoGameWindowsStarter
         {
             var keyboard = Keyboard.GetState();         // gets the current state of the keyboard
 
-            if (isJumping)
-            {
-                jumpTimer += gameTime.ElapsedGameTime;
-                Position.Y -= (250 / (float)jumpTimer.TotalMilliseconds);
-
-                if (jumpTimer.TotalMilliseconds >= JUMP_TIMER)
-                {
-                    isJumping = false;
-                    isFalling = true;
-                }
-            }
-
-            if (isFalling)
-            {
-                Position.Y += playerSpeed;
-
-                if (Position.Y > 400)
-                {
-                    Position.Y = 400;
-                    isFalling = false;
-                }
-            }
-
-            if (!isJumping && !isFalling && keyboard.IsKeyDown(Keys.Space))
-            {
-                isJumping = true;
-                jumpTimer = new TimeSpan(0);
-            }
-
             if (keyboard.IsKeyDown(Keys.Left))
             {
-                if (isJumping || isFalling) state = PlayerState.JumpLeft;
-                else state = PlayerState.MoveLeft;
+                state = PlayerState.MoveLeft;
                 Position.X -= playerSpeed;
             }
             else if (keyboard.IsKeyDown(Keys.Right))
             {
-                if (isJumping || isFalling) state = PlayerState.JumpRight;
-                else state = PlayerState.MoveRight;
+                state = PlayerState.MoveRight;
                 Position.X += playerSpeed;
             }
             else
@@ -118,19 +85,11 @@ namespace MonoGameWindowsStarter
                     currentFrame = 0;
                     animationTimer = new TimeSpan(0);
                     break;
-                case PlayerState.JumpLeft:
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-                    currentFrame = 7;
-                    break;
-                case PlayerState.JumpRight:
-                    spriteEffects = SpriteEffects.None;
-                    currentFrame = 7;
-                    break;
                 case PlayerState.MoveLeft:
                     animationTimer += gameTime.ElapsedGameTime;
                     spriteEffects = SpriteEffects.FlipHorizontally;
-                    // Walking frames are 9 & 10
-                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 9;
+                    // Walking frames are 1 & 2
+                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 1;
                     if (animationTimer.TotalMilliseconds > FRAME_RATE * 2)
                     {
                         animationTimer = new TimeSpan(0);
@@ -139,14 +98,40 @@ namespace MonoGameWindowsStarter
                 case PlayerState.MoveRight:
                     animationTimer += gameTime.ElapsedGameTime;
                     spriteEffects = SpriteEffects.None;
-                    // Walking frames are 9 & 10
-                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 9;
+                    // Walking frames are 1 & 2
+                    currentFrame = (int)animationTimer.TotalMilliseconds / FRAME_RATE + 1;
                     if (animationTimer.TotalMilliseconds > FRAME_RATE * 2)
                     {
                         animationTimer = new TimeSpan(0);
                     }
                     break;
+            }
+        }
 
+        public void CheckForBarrierCollision(IEnumerable<IBoundable> barriers)
+        {
+            Debug.WriteLine($"Checking fo barrier collisions against {barriers.Count()} barriers");
+            foreach(Barrier barrier in barriers)
+            {
+                if (Bounds.Collides(barrier.Bounds, barrier.Bounds.X))
+                {
+                    Position.X -= 1;
+                }
+
+                if (Bounds.Collides(barrier.Bounds, barrier.Bounds.Y))
+                {
+                    Position.Y -= 1;
+                }
+
+                if (Bounds.Collides(barrier.Bounds, barrier.Bounds.X + barrier.Bounds.Width))
+                {
+                    Position.X += 1;
+                }
+
+                if (Bounds.Collides(barrier.Bounds, barrier.Bounds.Y + barrier.Bounds.Height))
+                {
+                    Position.Y += 1;
+                }
             }
         }
 
